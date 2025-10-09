@@ -97,16 +97,16 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
     if (!question) return;
 
     // Check if documents are selected for modes that require them
-    const documentIds = Array.from(selectedDocumentsForChat);
-    if (
-      (chatMode === "tagged" || chatMode === "rag") &&
-      documentIds.length === 0
-    ) {
-      alert(
-        "Please select at least one document before asking a question with this mode."
-      );
-      return;
-    }
+    // const documentIds = Array.from(selectedDocumentsForChat);
+    // if (
+    //   (chatMode === "tagged" || chatMode === "rag") &&
+    //   documentIds.length === 0
+    // ) {
+    //   alert(
+    //     "Please select at least one document before asking a question with this mode."
+    //   );
+    //   return;
+    // }
 
     const userMsg: Message = {
       id: crypto.randomUUID(),
@@ -135,7 +135,6 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
     try {
       console.log("Sending question to API:", {
         question,
-        documentIds,
         chatSessionId,
         chatMode,
       });
@@ -145,7 +144,7 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question,
-          documentIds: chatMode === "chatgpt" ? [] : documentIds,
+          documentIds: [],
           sessionId: chatSessionId,
           mode: chatMode,
         }),
@@ -240,7 +239,7 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
   };
 
   return (
-    <div className="flex h-[700px] flex-col bg-background">
+    <div className="flex flex-col bg-background" style={{ height: "100%" }}>
       <ScrollArea ref={viewportRef} className="flex-1 overflow-hidden">
         <div className="space-y-4 p-4 pb-2">
           {messages.map((m) => (
@@ -338,7 +337,7 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
           <Button
             onClick={send}
             className="h-[56px] w-[56px] p-0"
-            disabled={isLoading || chatMode === "tagged" || chatMode === "rag"}
+            disabled={isLoading}
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -347,7 +346,7 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
             )}
           </Button>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground">
+        {/* <p className="mt-1 text-xs text-muted-foreground">
           {chatMode === "chatgpt"
             ? "ChatGPT mode - Direct conversation without document context."
             : selectedDocumentsForChat.size === 0
@@ -355,7 +354,7 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
             : `${chatMode.toUpperCase()} mode with ${
                 selectedDocumentsForChat.size
               } document(s). Answers will highlight their chunks in the right panel.`}
-        </p>
+        </p> */}
       </div>
     </div>
   );

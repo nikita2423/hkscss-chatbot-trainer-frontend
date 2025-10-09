@@ -7,19 +7,22 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const departmentId = searchParams.get("departmentId");
 
-  if (!departmentId) {
-    return Response.json(
-      {
-        success: false,
-        error: "Department ID is required",
-      },
-      { status: 400 }
-    );
-  }
+  // if (!departmentId) {
+  //   return Response.json(
+  //     {
+  //       success: false,
+  //       error: "Department ID is required",
+  //     },
+  //     { status: 400 }
+  //   );
+  // }
 
   try {
     // Construct the filter URL for the external API
-    const filterUrl = `${DOCUMENTS_API_URL}?filter=department.id||eq||${departmentId}`;
+    let filterUrl = DOCUMENTS_API_URL;
+    if (departmentId) {
+      filterUrl = `${DOCUMENTS_API_URL}?filter=department.id||eq||${departmentId}`;
+    }
 
     const response = await fetch(filterUrl, {
       method: "GET",

@@ -36,8 +36,8 @@ export default function TrainerPage() {
       <div className="flex h-screen bg-background">
         <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
-        <main className="flex-1 overflow-hidden">
-          <div className="h-full">{renderContent()}</div>
+        <main className="flex-1 overflow-y-scroll">
+          <div className="">{renderContent()}</div>
         </main>
       </div>
     </TrainerProvider>

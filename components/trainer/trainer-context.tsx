@@ -63,6 +63,7 @@ type TrainerState = {
   pdfsLoading: boolean;
   pdfsError: string | null;
   refreshDocuments: () => Promise<void>;
+  fetchAllDocuments: () => Promise<void>;
   deleteDocument: (documentId: string) => Promise<void>;
   saveFeedback: (messageId: string) => Promise<void>;
 
@@ -169,9 +170,7 @@ export function TrainerProvider({ children }: { children: React.ReactNode }) {
       setPdfsLoading(true);
       setPdfsError(null);
 
-      const response = await fetch(
-        `/api/documents?departmentId=${selectedDepartmentId}`
-      );
+      const response = await fetch(`/api/documents`);
       if (!response.ok) {
         throw new Error("Failed to fetch documents");
       }
@@ -202,6 +201,93 @@ export function TrainerProvider({ children }: { children: React.ReactNode }) {
   const refreshDocuments = async () => {
     await fetchDocuments();
   };
+
+  // Function to fetch documents from all departments
+  const fetchAllDocuments = async () => {
+    if (departments.length === 0) {
+      console.warn("No departments available to fetch documents from");
+      return;
+    }
+
+    try {
+      setPdfsLoading(true);
+      setPdfsError(null);
+
+      // Fetch documents for all departments in parallel
+      const fetchPromises = departments.map(async (department) => {
+        try {
+          const response = await fetch(
+            `/api/documents?departmentId=${department.id}`
+          );
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch documents for department ${department.name}`
+            );
+          }
+
+          const result = await response.json();
+          if (result.success) {
+            return { departmentId: department.id, documents: result.data };
+          } else {
+            throw new Error(
+              result.error ||
+                `Failed to fetch documents for department ${department.name}`
+            );
+          }
+        } catch (error) {
+          console.error(
+            `Error fetching documents for department ${department.name}:`,
+            error
+          );
+          return {
+            departmentId: department.id,
+            documents: [],
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
+        }
+      });
+
+      const results = await Promise.all(fetchPromises);
+
+      // Update state with all fetched documents
+      const newPdfs: Record<string, PDFDoc[]> = {};
+      let hasErrors = false;
+      const errors: string[] = [];
+
+      results.forEach(({ departmentId, documents, error }) => {
+        newPdfs[departmentId] = documents;
+        if (error) {
+          hasErrors = true;
+          errors.push(error);
+        }
+      });
+
+      setPdfs(() => newPdfs);
+
+      if (hasErrors) {
+        setPdfsError(`Some departments failed to load: ${errors.join(", ")}`);
+      }
+
+      console.log(
+        `Successfully fetched documents from ${departments.length} departments`
+      );
+    } catch (error) {
+      console.error("Error fetching all documents:", error);
+      setPdfsError(error instanceof Error ? error.message : "Unknown error");
+    } finally {
+      setPdfsLoading(false);
+    }
+  };
+
+  // Auto-fetch all documents when departments are loaded
+  useEffect(() => {
+    if (departments.length > 0 && !departmentsLoading) {
+      // Optional: You can control this behavior with a flag or condition
+      // For now, automatically fetch all documents when departments are available
+      // fetchAllDocuments();
+      fetchAllDocuments();
+    }
+  }, [departments, departmentsLoading]); // Fetch when departments change or loading finishes
 
   // Save feedback function
   const saveFeedback = async (messageId: string) => {
@@ -314,7 +400,7 @@ export function TrainerProvider({ children }: { children: React.ReactNode }) {
   // Fetch documents when selected department changes
   useEffect(() => {
     fetchDocuments();
-  }, [selectedDepartmentId]);
+  }, []);
 
   const [chunksByPdfState, setChunksByPdfState] = useState<
     Record<string, Chunk[]>
@@ -409,6 +495,7 @@ export function TrainerProvider({ children }: { children: React.ReactNode }) {
       pdfsLoading,
       pdfsError,
       refreshDocuments,
+      fetchAllDocuments,
       deleteDocument,
       saveFeedback,
       chunksByPdf: chunksByPdfState,
@@ -437,6 +524,7 @@ export function TrainerProvider({ children }: { children: React.ReactNode }) {
       pdfsLoading,
       pdfsError,
       refreshDocuments,
+      fetchAllDocuments,
       deleteDocument,
       saveFeedback,
       chunksByPdfState,

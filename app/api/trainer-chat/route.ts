@@ -15,16 +15,16 @@ export async function POST(request: Request) {
       );
     }
 
-    if (
-      !documentIds ||
-      !Array.isArray(documentIds) ||
-      documentIds.length === 0
-    ) {
-      return Response.json(
-        { success: false, error: "At least one document must be selected" },
-        { status: 400 }
-      );
-    }
+    // if (
+    //   !documentIds ||
+    //   !Array.isArray(documentIds) ||
+    //   documentIds.length === 0
+    // ) {
+    //   return Response.json(
+    //     { success: false, error: "At least one document must be selected" },
+    //     { status: 400 }
+    //   );
+    // }
 
     // Create the payload for the external API
     const payload = {

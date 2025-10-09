@@ -19,11 +19,11 @@ import { Tag, Database, MessageCircle } from "lucide-react";
 type ChatMode = "tagged" | "rag" | "chatgpt";
 
 export function ChatTab() {
-  const [chatMode, setChatMode] = useState<ChatMode>("rag");
+  const [chatMode, setChatMode] = useState<ChatMode>("tagged");
   return (
     <div className="flex flex-col gap-6 p-6">
       {/* Header */}
-      <div>
+      <div style={{ flex: "1 1 auto" }}>
         <h1 className="text-2xl font-bold tracking-tight">Chat</h1>
         <p className="text-muted-foreground">
           Select departments and documents to chat with your trained AI
@@ -31,8 +31,11 @@ export function ChatTab() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr_380px]">
-        <div className="flex flex-col gap-4">
+      <div
+        className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr_380px]"
+        style={{ flex: "1 1 auto", height: "calc(100% - 70px)" }}
+      >
+        <div className="flex flex-col gap-4" style={{ height: "inherit" }}>
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Selection</CardTitle>
@@ -45,7 +48,7 @@ export function ChatTab() {
           <DocumentsSelector />
         </div>
 
-        <Card className="min-h-[600px]">
+        <Card className="" style={{ height: "calc(100vh - 120px)" }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base">Conversation</CardTitle>
             <div className="flex items-center gap-2">
@@ -64,7 +67,7 @@ export function ChatTab() {
                       <span>Tagged</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="rag">
+                  {/* <SelectItem value="rag">
                     <div className="flex items-center gap-1.5">
                       <Database className="h-3 w-3" />
                       <span>RAG</span>
@@ -75,17 +78,17 @@ export function ChatTab() {
                       <MessageCircle className="h-3 w-3" />
                       <span>ChatGPT</span>
                     </div>
-                  </SelectItem>
+                  </SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className="p-0" style={{ height: "calc(100% - 10px)" }}>
             <ChatPanel chatMode={chatMode} />
           </CardContent>
         </Card>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4" style={{ height: "inherit" }}>
           <ReviewTools />
           <SelectedChunksPanel />
         </div>
