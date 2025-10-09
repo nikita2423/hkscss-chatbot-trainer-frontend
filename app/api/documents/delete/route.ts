@@ -1,3 +1,5 @@
+import { API_URL } from "@/lib/utils";
+
 export const maxDuration = 30;
 
 export async function DELETE(req: Request) {
@@ -18,15 +20,12 @@ export async function DELETE(req: Request) {
 
     // Call external delete API if available
     try {
-      const response = await fetch(
-        `http://localhost:3000/documents/${documentId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/documents/${documentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
         const result = await response.json();

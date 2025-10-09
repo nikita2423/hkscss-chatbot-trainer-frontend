@@ -1,3 +1,5 @@
+import { API_URL } from "@/lib/utils";
+
 export const maxDuration = 30;
 
 // Service class to handle upload and processing
@@ -14,7 +16,7 @@ class UploadService {
       formData.append("departmentId", departmentId);
 
       // Send request to the external upload API
-      const response = await fetch("http://localhost:3000/documents/upload", {
+      const response = await fetch(`${API_URL}/documents/upload`, {
         method: "POST",
         body: formData,
       });

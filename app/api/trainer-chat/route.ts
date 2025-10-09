@@ -1,5 +1,7 @@
+import { API_URL } from "@/lib/utils";
+
 // External chat API URL
-const CHAT_API_URL = "http://localhost:3000/chat";
+const CHAT_API_URL = `${API_URL}/chat`;
 
 export async function POST(request: Request) {
   try {

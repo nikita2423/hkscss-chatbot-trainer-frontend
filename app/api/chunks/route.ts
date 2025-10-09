@@ -1,5 +1,8 @@
 // External chunks API base URL
-const CHUNKS_API_URL = "http://localhost:3000/chunks";
+import { API_URL } from "@/lib/utils";
+
+// External chunks API base URL
+const CHUNKS_API_URL = `${API_URL}/chunks`;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

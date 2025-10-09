@@ -1,5 +1,7 @@
+import { API_URL } from "@/lib/utils";
+
 // External documents API base URL
-const DOCUMENTS_API_URL = "http://localhost:3000/documents";
+const DOCUMENTS_API_URL = `${API_URL}/documents`;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -18,7 +20,7 @@ export async function GET(request: Request) {
   try {
     // Construct the filter URL for the external API
     const filterUrl = `${DOCUMENTS_API_URL}?filter=department.id||eq||${departmentId}`;
-    
+
     const response = await fetch(filterUrl, {
       method: "GET",
       headers: {
@@ -50,11 +52,12 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("Failed to fetch documents from external API:", error);
-    
+
     return Response.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to fetch documents",
+        error:
+          error instanceof Error ? error.message : "Failed to fetch documents",
       },
       { status: 500 }
     );

@@ -1,5 +1,8 @@
 // External API endpoint
-const DEPARTMENTS_API_URL = "http://localhost:3000/departments";
+import { API_URL } from "@/lib/utils";
+
+// External API endpoint
+const DEPARTMENTS_API_URL = `${API_URL}/departments`;
 
 // Fallback departments in case external API fails
 const fallbackDepartments = [

@@ -1,3 +1,5 @@
+import { API_URL } from "@/lib/utils";
+
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -42,7 +44,7 @@ export async function POST(req: Request) {
 
     try {
       // Call external feedback API
-      const response = await fetch("http://localhost:3000/feedback/save", {
+      const response = await fetch(`${API_URL}/feedback/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
