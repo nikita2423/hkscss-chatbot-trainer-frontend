@@ -44,6 +44,7 @@ export type Chunk = {
     createdAt: string;
   };
   reference?: string; // Add reference field for citation numbering
+  tags?: string[]; // Add tags field for chunk categorization
 };
 export type Message = {
   id: string;

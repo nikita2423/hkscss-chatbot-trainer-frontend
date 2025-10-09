@@ -39,6 +39,7 @@ import {
   Upload,
   Calendar,
   Trash2,
+  Tag,
 } from "lucide-react";
 
 import ReactMarkdown from "react-markdown";
@@ -733,6 +734,29 @@ export function DocumentsTab() {
                                 </div>
                               </Card>
                             </div>
+
+                            {/* Tags Section */}
+                            {c.tags && c.tags.length > 0 && (
+                              <Card className="p-4 bg-gradient-to-br from-blue/10 to-blue/5 border-blue/20">
+                                <div className="space-y-3">
+                                  <p className="text-xs font-semibold text-blue-800 uppercase tracking-wide flex items-center gap-1">
+                                    <Tag className="h-3 w-3" />
+                                    Tags
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {c.tags.map((tag, tagIdx) => (
+                                      <Badge
+                                        key={tagIdx}
+                                        variant="secondary"
+                                        className="text-xs bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-150"
+                                      >
+                                        {tag}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              </Card>
+                            )}
                           </div>
 
                           {/* Enhanced Content Section */}

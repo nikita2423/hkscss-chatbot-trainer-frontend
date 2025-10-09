@@ -49,6 +49,7 @@ export async function GET(request: Request) {
       score: null, // Not provided by external API
       source: chunk.document?.filename || null,
       document: chunk.document,
+      tags: chunk.tags || [],
     }));
 
     return Response.json({
