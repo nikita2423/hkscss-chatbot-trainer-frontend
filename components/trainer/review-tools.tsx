@@ -15,10 +15,18 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ThumbsUp, ThumbsDown, Flag, Edit3, Save, CheckCircle } from "lucide-react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  Flag,
+  Edit3,
+  Save,
+  CheckCircle,
+} from "lucide-react";
 
 export function ReviewTools() {
-  const { messages, selectedMessageId, setMessages, saveFeedback } = useTrainer();
+  const { messages, selectedMessageId, setMessages, saveFeedback } =
+    useTrainer();
   const msgIndex = useMemo(
     () => messages.findIndex((m) => m.id === selectedMessageId),
     [messages, selectedMessageId]
@@ -60,17 +68,17 @@ export function ReviewTools() {
 
   const handleSaveFeedback = async () => {
     if (!message) return;
-    
+
     try {
       setIsSaving(true);
       setSaveSuccess(false);
       await saveFeedback(message.id);
       setSaveSuccess(true);
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
-      console.error('Failed to save feedback:', error);
+      console.error("Failed to save feedback:", error);
       // You might want to show an error toast here
     } finally {
       setIsSaving(false);
@@ -148,15 +156,19 @@ export function ReviewTools() {
         </CardContent>
       </ScrollArea>
       <CardFooter className="border-t flex flex-shrink-0 justify-between gap-2">
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex items-center gap-2">
+        {/* <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
             <Flag className="h-4 w-4" />
             Flag for Review
           </Button>
-        </div>
-        
+        </div> */}
+
         {message && (
-          <Button 
+          <Button
             onClick={handleSaveFeedback}
             disabled={isSaving || !message}
             variant={saveSuccess ? "outline" : "default"}
@@ -171,7 +183,7 @@ export function ReviewTools() {
             ) : (
               <>
                 <Save className="h-4 w-4" />
-                {isSaving ? "Saving..." : "Save Feedback"}
+                {isSaving ? "Saving..." : "Complete Review"}
               </>
             )}
           </Button>

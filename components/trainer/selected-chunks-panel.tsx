@@ -22,7 +22,15 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
-import { FileText, Hash, Target, Sparkles, ChevronRight } from "lucide-react";
+import {
+  FileText,
+  Hash,
+  Target,
+  Sparkles,
+  ChevronRight,
+  MessageSquare,
+  Tag,
+} from "lucide-react";
 
 export function SelectedChunksPanel() {
   const { messages, selectedMessageId, rerank, setRerank } = useTrainer();
@@ -84,11 +92,24 @@ export function SelectedChunksPanel() {
           <CardHeader className="pb-3 hover:bg-muted/50 transition-colors">
             <CardTitle className="flex items-center gap-2 text-base">
               <Target className="h-4 w-4 text-primary" />
-              Document Sections Ref:
+              {!answer?.matchedFeedback && (
+                <span className="text-sm text-muted-foreground">
+                  Document Sections Ref:
+                </span>
+              )}
               {answer?.citations?.length && (
                 <Badge variant="outline" className="ml-1">
                   {answer.citations.length} section
                   {answer.citations.length !== 1 ? "s" : ""}
+                </Badge>
+              )}
+              {answer?.matchedFeedback && (
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-700"
+                >
+                  <MessageSquare className="h-3 w-3 mr-1" />
+                  Matched
                 </Badge>
               )}
               <ChevronRight
@@ -129,77 +150,147 @@ export function SelectedChunksPanel() {
               </div>
             ) : (
               <div className="space-y-0">
-                {answer.citations.map((c, idx) => (
-                  <div
-                    key={c.id}
-                    className="border-b border-border/40 last:border-b-0"
-                  >
-                    <div className="p-4 hover:bg-muted/30 transition-colors">
-                      {/* Header with ranking and score */}
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant="outline"
-                            className="text-xs font-mono"
-                          >
-                            <Hash className="h-3 w-3 mr-1" />
-                            {idx + 1}
-                          </Badge>
-                          {c.section_title && (
-                            <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
-                              {c.section_title}
-                            </span>
-                          )}
-                        </div>
+                {/* Matched Feedback Section */}
+                {answer.matchedFeedback && (
+                  <div className="border-b border-blue-200/50 bg-blue-50/30">
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <MessageSquare className="h-4 w-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-800">
+                          Matched Question & Feedback
+                        </span>
                         <Badge
-                          className={cn(
-                            "text-xs font-medium border",
-                            getScoreColor(c.score ?? 0)
-                          )}
+                          variant="secondary"
+                          className="ml-auto text-xs bg-blue-100 text-blue-700"
                         >
-                          {(c.score ?? 0).toFixed(3)}
+                          {answer.matchedFeedback.feedback_status}
                         </Badge>
                       </div>
 
-                      {/* Content */}
                       <div className="space-y-3">
-                        <p className="text-sm leading-relaxed text-foreground/90">
-                          {c.content}
-                        </p>
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground mb-1">
+                            Original Question:
+                          </p>
+                          <p className="text-sm text-foreground bg-white/60 p-2 rounded border">
+                            {answer.matchedFeedback.question}
+                          </p>
+                        </div>
 
-                        {/* Footer with metadata */}
-                        <div className="flex items-center justify-between pt-2">
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            {c.source && (
-                              <div className="flex items-center gap-1">
-                                <FileText className="h-3 w-3" />
-                                <span
-                                  className="truncate max-w-[120px]"
-                                  title={c.source}
-                                >
-                                  {c.source}
-                                </span>
-                              </div>
-                            )}
-                            {c.start_index !== null && c.end_index !== null && (
-                              <span className="text-xs text-muted-foreground/60">
-                                pos: {c.start_index}-{c.end_index}
-                              </span>
-                            )}
+                        {answer.matchedFeedback.preferred_answer && (
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Preferred Answer:
+                            </p>
+                            <p className="text-sm text-foreground bg-green-50/50 p-2 rounded border border-green-200/50">
+                              {answer.matchedFeedback.preferred_answer}
+                            </p>
                           </div>
-                          {/* <span
-                            className={cn(
-                              "text-xs px-2 py-0.5 rounded-full font-medium",
-                              getScoreColor(c.score ?? 0)
-                            )}
-                          >
-                            {getScoreLabel(c.score ?? 0)}
-                          </span> */}
+                        )}
+
+                        {answer.matchedFeedback.tags &&
+                          answer.matchedFeedback.tags.length > 0 && (
+                            <div>
+                              <p className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                                <Tag className="h-3 w-3" />
+                                Tags:
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {answer.matchedFeedback.tags.map(
+                                  (tag, tagIdx) => (
+                                    <Badge
+                                      key={tagIdx}
+                                      variant="outline"
+                                      className="text-xs bg-gray-50"
+                                    >
+                                      {tag}
+                                    </Badge>
+                                  )
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                        <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
+                          <span>
+                            Type: {answer.matchedFeedback.feedback_type}
+                          </span>
+                          <span>
+                            {new Date(
+                              answer.matchedFeedback.created_at
+                            ).toLocaleDateString()}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                )}
+
+                {/* Document Citations */}
+                {!answer.matchedFeedback &&
+                  answer.citations.map((c, idx) => (
+                    <div
+                      key={c.id}
+                      className="border-b border-border/40 last:border-b-0"
+                    >
+                      <div className="p-4 hover:bg-muted/30 transition-colors">
+                        {/* Header with ranking and score */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant="outline"
+                              className="text-xs font-mono"
+                            >
+                              {c.reference || `[${idx + 1}]`}
+                            </Badge>
+                            {c.section_title && (
+                              <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
+                                {c.section_title}
+                              </span>
+                            )}
+                          </div>
+                          <Badge
+                            className={cn(
+                              "text-xs font-medium border",
+                              getScoreColor(c.score ?? 0)
+                            )}
+                          >
+                            {(c.score ?? 0).toFixed(3)}
+                          </Badge>
+                        </div>
+
+                        {/* Content */}
+                        <div className="space-y-3">
+                          <p className="text-sm leading-relaxed text-foreground/90">
+                            {c.content}
+                          </p>
+
+                          {/* Footer with metadata */}
+                          <div className="flex items-center justify-between pt-2">
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                              {c.source && (
+                                <div className="flex items-center gap-1">
+                                  <FileText className="h-3 w-3" />
+                                  <span
+                                    className="truncate max-w-[120px]"
+                                    title={c.source}
+                                  >
+                                    {c.source}
+                                  </span>
+                                </div>
+                              )}
+                              {c.start_index !== null &&
+                                c.end_index !== null && (
+                                  <span className="text-xs text-muted-foreground/60">
+                                    pos: {c.start_index}-{c.end_index}
+                                  </span>
+                                )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
               </div>
             )}
             {/* <ScrollArea className="h-[320px]"></ScrollArea> */}

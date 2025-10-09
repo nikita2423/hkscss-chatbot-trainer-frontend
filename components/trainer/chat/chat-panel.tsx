@@ -187,11 +187,12 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
       );
 
       const assistantMsg: Message = {
-        id: crypto.randomUUID(),
+        id: data.messageId,
         role: "assistant",
         content: data.answer,
         citations,
         createdAt: Date.now(),
+        matchedFeedback: data.matched, // matched feedback data from trainer-chat API
       };
 
       setMessages((prev) => [...prev, assistantMsg]);

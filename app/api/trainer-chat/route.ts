@@ -58,6 +58,8 @@ export async function POST(request: Request) {
       success: true,
       sessionId: data.session_id,
       answer: data.answer,
+      messageId: data.message_id,
+      matched: data.matched,
       sources:
         data.sources?.map((source: any) => ({
           id: source.chunk_id,

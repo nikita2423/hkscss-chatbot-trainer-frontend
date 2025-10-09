@@ -13,6 +13,21 @@ export type PDFDoc = {
   createdAt?: string;
   department?: Department;
 };
+export type MatchedFeedback = {
+  id: number;
+  chat_message_id: number;
+  question: string;
+  preferred_answer: string;
+  feedback_status: string;
+  feedback_type: string;
+  original_answer: string;
+  tags: string[];
+  embedding?: number[];
+  created_at: string;
+  chunkIds: number[];
+  documentIds: number[];
+};
+
 export type Chunk = {
   id: string;
   content: string;
@@ -28,6 +43,7 @@ export type Chunk = {
     filename: string;
     createdAt: string;
   };
+  reference?: string; // Add reference field for citation numbering
 };
 export type Message = {
   id: string;
@@ -39,6 +55,8 @@ export type Message = {
   preferred?: string;
   tags?: string[];
   quality?: "good" | "bad";
+  // matched feedback data from trainer-chat API
+  matchedFeedback?: MatchedFeedback;
 };
 
 type ReRankSettings = {
@@ -320,7 +338,8 @@ export function TrainerProvider({ children }: { children: React.ReactNode }) {
         preferred_answer: message.preferred || null,
         original_answer: message.content,
         tags: message.tags || [],
-        feedback_type: message.quality === "bad" ? "correction" : "improvement",
+        feedback_type:
+          message.quality === "bad" ? "Need Improvement" : "correct",
         feedback_status: "completed",
         chat_message_id: messageId,
       };

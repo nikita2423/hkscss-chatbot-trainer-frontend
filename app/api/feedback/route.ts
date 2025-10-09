@@ -33,24 +33,32 @@ export async function POST(req: Request) {
 
     // Prepare feedback data for external API
     const feedbackData = {
-      question,
-      preferred_answer: preferred_answer || original_answer, // Use original if no preferred answer
-      original_answer,
-      tags,
-      feedback_type,
-      feedback_status,
       chat_message_id,
+      feedback_type,
+      newAnswer: preferred_answer,
+      tags,
+      // question,
+      // preferred_answer: preferred_answer || original_answer, // Use original if no preferred answer
+      // original_answer,
+
+      // feedback_type,
+      // feedback_status,
+      // chat_message_id,
     };
+
+    console.log("feedbackData", feedbackData);
 
     try {
       // Call external feedback API
-      const response = await fetch(`${API_URL}/feedback/save`, {
+      const response = await fetch(`${API_URL}/feedback/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(feedbackData),
       });
+
+      console.log("response", response);
 
       if (response.ok) {
         const result = await response.json();
@@ -74,13 +82,13 @@ export async function POST(req: Request) {
 
       // Return success for demo purposes even if external API fails
       return Response.json({
-        success: true,
-        message: "Feedback saved locally (external API unavailable)",
-        data: {
-          id: crypto.randomUUID(),
-          ...feedbackData,
-          saved_at: new Date().toISOString(),
-        },
+        success: false,
+        message: error,
+        // data: {
+        //   id: chat_message_id,
+        //   ...feedbackData,
+        //   saved_at: new Date().toISOString(),
+        // },
       });
     }
   } catch (error) {
