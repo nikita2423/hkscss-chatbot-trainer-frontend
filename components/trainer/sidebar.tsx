@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn, auth, type AuthUser, API_URL } from "@/lib/utils";
+import { cn, auth, type AuthUser } from "@/lib/utils";
 import {
   LayoutDashboard,
   FileText,
@@ -74,7 +74,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
       console.log("Creating new chat session for user:", userId);
 
-      const response = await fetch(`${API_URL}/chat/session`, {
+      const response = await fetch("/api/session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,16 +85,17 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to create session: ${response.status}`);
-      }
-
       const data = await response.json();
 
-      if (data.id) {
-        console.log("Session Data", data.id);
-        setChatSessionId(data.id);
-        console.log("New chat session created:", data.id);
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to create session");
+      }
+
+      if (data.sessionId || data.id) {
+        const sessionId = data.sessionId || data.id;
+        console.log("Session Data", sessionId);
+        setChatSessionId(sessionId);
+        console.log("New chat session created:", sessionId);
       }
 
       // Switch to chat tab
