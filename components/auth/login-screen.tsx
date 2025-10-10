@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { API_URL } from "@/lib/utils";
 
 interface LoginProps {
   onLogin: () => void;
@@ -50,7 +49,7 @@ export function LoginScreen({ onLogin }: LoginProps) {
     setError("");
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch("/api/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,8 +62,8 @@ export function LoginScreen({ onLogin }: LoginProps) {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Login failed");
       }
 
       const loginData: LoginResponse = data;
