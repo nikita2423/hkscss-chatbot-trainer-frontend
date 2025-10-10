@@ -93,16 +93,20 @@ export function SelectedChunksPanel() {
             <CardTitle className="flex items-center gap-2 text-base">
               <Target className="h-4 w-4 text-primary" />
               {!answer?.matchedFeedback && (
-                <span className="text-sm text-muted-foreground">
-                  Document Sections Ref:
-                </span>
+                <>
+                  <span className="text-sm text-muted-foreground">
+                    Document Sections Ref:
+                  </span>
+
+                  {answer?.citations?.length && (
+                    <Badge variant="outline" className="ml-1">
+                      {answer.citations.length} section
+                      {answer.citations.length !== 1 ? "s" : ""}
+                    </Badge>
+                  )}
+                </>
               )}
-              {answer?.citations?.length && (
-                <Badge variant="outline" className="ml-1">
-                  {answer.citations.length} section
-                  {answer.citations.length !== 1 ? "s" : ""}
-                </Badge>
-              )}
+
               {answer?.matchedFeedback && (
                 <Badge
                   variant="secondary"

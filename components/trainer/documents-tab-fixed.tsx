@@ -164,6 +164,8 @@ export function DocumentsTab() {
       } catch (error) {
         console.error("Upload error:", error);
         // You might want to show a toast notification here
+      } finally {
+        setIsUploading(false);
       }
     },
     [

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTrainer } from "./trainer-context";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -10,7 +10,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn, auth, type AuthUser, API_URL } from "@/lib/utils";
 import {
   LayoutDashboard,
   FileText,
@@ -20,6 +27,9 @@ import {
   Clock,
   Users,
   Plus,
+  User,
+  LogOut,
+  Settings,
 } from "lucide-react";
 
 type SidebarProps = {
@@ -35,10 +45,66 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     selectedDepartmentId,
     setSelectedDepartmentId,
     chatSessionId,
+    setChatSessionId,
   } = useTrainer();
 
   const [documentsOpen, setDocumentsOpen] = useState(true);
   const [chatOpen, setChatOpen] = useState(true);
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  // Get user data from auth
+  useEffect(() => {
+    const userData = auth.getUser();
+    setUser(userData);
+  }, []);
+
+  const handleLogout = () => {
+    auth.clearAuth();
+    // Reload the page to trigger authentication check
+    window.location.reload();
+  };
+
+  const handleNewChat = async () => {
+    try {
+      const userId = user?.id;
+      if (!userId) {
+        console.error("No user ID available for creating session");
+        return;
+      }
+
+      console.log("Creating new chat session for user:", userId);
+
+      const response = await fetch(`${API_URL}/chat/session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...auth.getAuthHeader(),
+        },
+        body: JSON.stringify({
+          userId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create session: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.id) {
+        console.log("Session Data", data.id);
+        setChatSessionId(data.id);
+        console.log("New chat session created:", data.id);
+      }
+
+      // Switch to chat tab
+      onTabChange("chat");
+    } catch (error) {
+      console.error("Error creating new chat session:", error);
+      // Still switch to chat tab even if session creation fails
+      onTabChange("chat");
+    }
+  };
 
   // Get all documents across departments
   const allDocuments = Object.values(pdfs).flat();
@@ -214,7 +280,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                             variant="default"
                             size="sm"
                             className="w-full justify-start gap-2 px-2 py-1.5 h-8 text-xs bg-primary hover:bg-primary/90"
-                            onClick={() => onTabChange("chat")}
+                            onClick={handleNewChat}
                           >
                             <Plus className="h-3 w-3" />
                             <span>New Chat</span>
@@ -222,7 +288,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                         </div>
 
                         {/* Session History */}
-                        <div>
+                        {/* <div>
                           <p className="text-xs font-medium text-muted-foreground mb-1">
                             Session History
                           </p>
@@ -251,7 +317,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                               No previous sessions
                             </p>
                           )}
-                        </div>
+                        </div> */}
                       </>
                     )}
                   </CollapsibleContent>
@@ -262,8 +328,53 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         </nav>
       </ScrollArea>
 
-      {/* Footer */}
+      {/* User Section */}
       <div className="border-t p-3">
+        {user && (
+          <div className="mb-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 p-2 h-auto"
+                >
+                  <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full shrink-0">
+                    <User className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {user.name || user.email.split("@")[0]}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem disabled>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-destructive"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
+
+        {/* Stats */}
         <div className="text-xs text-muted-foreground space-y-1">
           <div className="flex justify-between">
             <span>Total Documents:</span>

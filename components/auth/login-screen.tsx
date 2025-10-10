@@ -13,9 +13,22 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { API_URL } from "@/lib/utils";
 
 interface LoginProps {
   onLogin: () => void;
+}
+
+interface LoginResponse {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: number;
+  refreshToken: string;
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+  };
 }
 
 export function LoginScreen({ onLogin }: LoginProps) {
@@ -36,17 +49,49 @@ export function LoginScreen({ onLogin }: LoginProps) {
     setIsLoading(true);
     setError("");
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    // Check credentials
-    if (email === "admin@hkscss.com" && password === "1234567") {
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      const loginData: LoginResponse = data;
+
+      // Store tokens in localStorage
+      localStorage.setItem("accessToken", loginData.accessToken);
+      localStorage.setItem("refreshToken", loginData.refreshToken);
+      localStorage.setItem("tokenType", loginData.tokenType);
+      localStorage.setItem("expiresIn", loginData.expiresIn.toString());
+      localStorage.setItem("user", JSON.stringify(loginData.user));
+
+      // Calculate and store expiration time
+      const expirationTime = Date.now() + loginData.expiresIn * 1000;
+      localStorage.setItem("tokenExpiration", expirationTime.toString());
+
+      console.log("Login successful:", loginData.user);
       onLogin();
-    } else {
-      setError("Invalid email or password");
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
@@ -118,14 +163,6 @@ export function LoginScreen({ onLogin }: LoginProps) {
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
-
-          <div className="mt-6 pt-4 border-t">
-            <div className="text-sm text-muted-foreground space-y-1">
-              <p className="font-medium">Demo Credentials:</p>
-              <p>Email: admin@hkscss.com</p>
-              <p>Password: 1234567</p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

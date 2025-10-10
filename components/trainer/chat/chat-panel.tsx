@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { cn, auth } from "@/lib/utils";
 import {
   User,
   Bot,
@@ -133,10 +133,15 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
     setTimeout(scrollToBottom, 100);
 
     try {
+      // Get user ID from authentication
+      const user = auth.getUser();
+      const userId = user?.id;
+
       console.log("Sending question to API:", {
         question,
         chatSessionId,
         chatMode,
+        userId,
       });
       setLoadingProgress(30);
       const res = await fetch("/api/trainer-chat", {
@@ -147,6 +152,7 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
           documentIds: [],
           sessionId: chatSessionId,
           mode: chatMode,
+          userId,
         }),
       });
 
