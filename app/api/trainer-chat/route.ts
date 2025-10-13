@@ -6,7 +6,7 @@ const CHAT_API_URL = `${API_URL}/chat`;
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { question, documentIds, sessionId } = body;
+    const { question, documentIds, sessionId, departmentId, userId } = body;
 
     if (!question) {
       return Response.json(
@@ -31,6 +31,8 @@ export async function POST(request: Request) {
       question,
       documentIds: documentIds.map((id: string) => parseInt(id, 10)), // Convert to integers
       sessionId: sessionId || 1, // Default session ID if not provided
+      departmentId: departmentId || null,
+      userId: userId || null,
     };
 
     console.log("Sending to external API:", payload);

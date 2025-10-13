@@ -151,8 +151,8 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
           question,
           documentIds: [],
           sessionId: chatSessionId,
-          mode: chatMode,
           userId,
+          departmentId: selectedDepartmentId,
         }),
       });
 
@@ -244,6 +244,8 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
       setTimeout(() => setLoadingProgress(0), 1000);
     }
   };
+
+  console.log("Selected Department Id", selectedDepartmentId);
 
   return (
     <div className="flex flex-col bg-background" style={{ height: "100%" }}>
