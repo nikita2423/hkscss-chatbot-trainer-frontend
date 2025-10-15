@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useTrainer } from "./trainer-context";
 import {
   Card,
@@ -36,6 +36,7 @@ export function ReviewTools() {
   const [tagInput, setTagInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const toggleQuality = (q: "good" | "bad") => {
     if (!message) return;
@@ -46,16 +47,49 @@ export function ReviewTools() {
     });
   };
 
-  const addTag = () => {
-    if (!message || !tagInput.trim()) return;
+  const addTag = (tagValue?: string) => {
+    const valueToAdd = tagValue || tagInput.trim();
+    if (!message || !valueToAdd) return;
+
     setMessages((prev) => {
       const next = [...prev];
-      const tags = new Set([...(prev[msgIndex].tags ?? []), tagInput.trim()]);
+      const tags = new Set([...(prev[msgIndex].tags ?? []), valueToAdd]);
       next[msgIndex] = { ...prev[msgIndex], tags: Array.from(tags) };
       return next;
     });
     setTagInput("");
   };
+
+  // Debounced auto-add tag functionality
+  useEffect(() => {
+    if (!tagInput.trim() || !message) return;
+
+    // Clear existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    // Set new timeout for auto-adding tag
+    debounceTimeoutRef.current = setTimeout(() => {
+      addTag(tagInput.trim());
+    }, 1500); // 1.5 seconds delay
+
+    // Cleanup function
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [tagInput, message, msgIndex]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const savePreferred = (value: string) => {
     if (!message) return;
@@ -133,8 +167,14 @@ export function ReviewTools() {
                     placeholder="Add tag..."
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addTag();
+                      }
+                    }}
                   />
-                  <Button variant="outline" onClick={addTag}>
+                  <Button variant="outline" onClick={() => addTag()}>
                     Add
                   </Button>
                 </div>
