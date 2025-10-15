@@ -3,7 +3,7 @@
 import { LoginScreen } from "@/components/auth/login-screen";
 import { Suspense, useState, useEffect } from "react";
 import { auth, type AuthUser } from "@/lib/utils";
-import TrainerPage from "./trainer/page";
+import TrainerPage from "../components/trainer/page";
 
 export default function Page() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
