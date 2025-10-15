@@ -13,6 +13,7 @@ export async function POST(req: Request) {
       feedback_type = "improvement",
       feedback_status = "completed",
       chat_message_id,
+      department_id,
     } = body;
 
     if (!question || !original_answer) {
@@ -37,6 +38,8 @@ export async function POST(req: Request) {
       feedback_type,
       newAnswer: preferred_answer,
       tags,
+      question: question,
+      department_id: department_id || null,
       // question,
       // preferred_answer: preferred_answer || original_answer, // Use original if no preferred answer
       // original_answer,

@@ -140,7 +140,7 @@ export function SelectedChunksPanel() {
                   Select an answer to see its supporting sections
                 </p>
               </div>
-            ) : !answer.citations?.length ? (
+            ) : !answer.citations?.length && !answer.matchedFeedback ? (
               <div className="flex flex-col items-center justify-center p-8 text-center">
                 <div className="rounded-full bg-muted/50 p-3 mb-3">
                   <FileText className="h-6 w-6 text-muted-foreground" />

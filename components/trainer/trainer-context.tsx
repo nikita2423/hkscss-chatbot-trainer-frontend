@@ -343,6 +343,7 @@ export function TrainerProvider({ children }: { children: React.ReactNode }) {
           message.quality === "bad" ? "Need Improvement" : "correct",
         feedback_status: "completed",
         chat_message_id: messageId,
+        department_id: selectedDepartmentId || null,
       };
 
       const response = await fetch("/api/feedback", {
