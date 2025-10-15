@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(30000), // 30 second timeout for chat
+      signal: AbortSignal.timeout(60000), // 60 second timeout for chat
     });
 
     if (!response.ok) {

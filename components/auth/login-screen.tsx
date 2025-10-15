@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import Image from "next/image";
 
 interface LoginProps {
   onLogin: () => void;
@@ -97,8 +98,14 @@ export function LoginScreen({ onLogin }: LoginProps) {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mx-auto mb-2">
-            <Lock className="w-6 h-6 text-primary" />
+          <div className="flex items-center justify-center mx-auto mb-4">
+            <Image
+              src="/images/hkscss-logo.svg"
+              alt="HKCSS Logo"
+              width={120}
+              height={80}
+              className="object-contain"
+            />
           </div>
           <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
           <CardDescription>

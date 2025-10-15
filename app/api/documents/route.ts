@@ -20,6 +20,7 @@ export async function GET(request: Request) {
   try {
     // Construct the filter URL for the external API
     let filterUrl = DOCUMENTS_API_URL;
+    console.log("Department ID in documents route:", DOCUMENTS_API_URL);
     if (departmentId) {
       filterUrl = `${DOCUMENTS_API_URL}?filter=department.id||eq||${departmentId}`;
     }

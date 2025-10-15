@@ -31,6 +31,7 @@ import {
   LogOut,
   Settings,
 } from "lucide-react";
+import Image from "next/image";
 
 type SidebarProps = {
   activeTab: string;
@@ -154,10 +155,19 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     <aside className="flex h-full w-48 flex-col border-r bg-muted/10">
       {/* Header */}
       <div className="border-b p-4">
-        <h2 className="text-lg font-semibold text-foreground">
+        <div className="flex items-center justify-center mb-3">
+          <Image
+            src="/images/hkscss-logo.svg"
+            alt="HKCSS Logo"
+            width={80}
+            height={50}
+            className="object-contain"
+          />
+        </div>
+        <h2 className="text-sm font-semibold text-foreground text-center">
           Chatbot Trainer
         </h2>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground text-center">
           Manage your AI assistant
         </p>
       </div>
