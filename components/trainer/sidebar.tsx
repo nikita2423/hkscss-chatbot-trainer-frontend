@@ -187,8 +187,14 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                     ? "bg-secondary/80 text-secondary-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
-                onClick={() => {
-                  onTabChange(item.id);
+                onClick={async () => {
+                  // If clicking chat tab and session ID is 0, create new session
+                  if (item.id === "chat" && chatSessionId === 0) {
+                    await handleNewChat();
+                  } else {
+                    onTabChange(item.id);
+                  }
+
                   if (item.collapsible && item.onToggle) {
                     item.onToggle();
                   }

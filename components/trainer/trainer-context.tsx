@@ -439,7 +439,7 @@ export function TrainerProvider({ children }: { children: React.ReactNode }) {
   ) => setSelectedDocumentsForChatState((prev) => updater(prev));
 
   // Chat session management
-  const [chatSessionId, setChatSessionId] = useState<number>(1);
+  const [chatSessionId, setChatSessionId] = useState<number>(0);
 
   const setChunksByPdf = (
     updater: (prev: Record<string, Chunk[]>) => Record<string, Chunk[]>

@@ -25,11 +25,17 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 type ChatMode = "tagged" | "rag" | "chatgpt";
 
 type ChatPanelProps = {
   chatMode: ChatMode;
+};
+
+// Helper to convert ^^text^^ to <small>text</small>
+const formatSmallText = (text: string) => {
+  return text.replace(/\^\^([\s\S]*?)\^\^/g, "<small>$1</small>");
 };
 
 export function ChatPanel({ chatMode }: ChatPanelProps) {
@@ -303,15 +309,33 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
                   </div>
                 ) : streamingMessageId === m.id ? (
                   <span>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {streamedContent}
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeRaw]}
+                      components={{
+                        small: ({ node, ...props }) => (
+                          <small className="text-xs text-gray-500" {...props} />
+                        ),
+                      }}
+                      skipHtml={false}
+                    >
+                      {formatSmallText(streamedContent)}
                     </ReactMarkdown>
 
                     <span className="animate-pulse">|</span>
                   </span>
                 ) : (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {m.content}
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
+                    components={{
+                      small: ({ node, ...props }) => (
+                        <small className="text-xs text-gray-500" {...props} />
+                      ),
+                    }}
+                    skipHtml={false}
+                  >
+                    {formatSmallText(m.content)}
                   </ReactMarkdown>
                 )}
               </div>
@@ -330,6 +354,18 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
             <Progress value={loadingProgress} className="h-1" />
           </div>
         )}
+
+        {/* Disclaimer */}
+        <div className="mb-3 p-3 bg-muted/50 rounded-lg border border-border/50">
+          <p className="text-xs text-muted-foreground">
+            <strong>Disclaimer:</strong> The responses provided by this chatbot
+            are for reference and general informational purposes only. Please do
+            not rely solely on the chatbot's output for critical decisions.
+            Always review and validate the information directly from the source
+            document before use.
+          </p>
+        </div>
+
         <div className="flex items-end gap-2">
           <Textarea
             placeholder="Ask a question..."
