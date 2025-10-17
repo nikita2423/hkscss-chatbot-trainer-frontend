@@ -68,7 +68,7 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
 
   // Auto-scroll when messages change
   useEffect(() => {
-    scrollToBottom();
+    // scrollToBottom();
   }, [messages]);
 
   // Streaming text effect
@@ -89,7 +89,7 @@ export function ChatPanel({ chatMode }: ChatPanelProps) {
         currentIndex++;
 
         // Auto-scroll during streaming
-        setTimeout(scrollToBottom, 10);
+        // setTimeout(scrollToBottom, 10);
       } else {
         clearInterval(streamInterval);
         setStreamingMessageId(null);
