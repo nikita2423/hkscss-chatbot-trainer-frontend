@@ -107,7 +107,7 @@ export function DocumentsSelector() {
             </div> */}
 
             {/* Documents List */}
-            <ScrollArea className="h-[500px]">
+            <ScrollArea className="h-[400px]">
               <div className="space-y-2">
                 {currentPdfs.map((pdf) => (
                   <div
