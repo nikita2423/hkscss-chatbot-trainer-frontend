@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import { TrainerProvider } from "@/components/trainer/trainer-context";
 import { Sidebar } from "@/components/trainer/sidebar";
 import { DashboardTab } from "@/components/trainer/dashboard-tab";
-import { DocumentsTab } from "@/components/trainer/documents-tab-fixed";
+import { DocumentsTab } from "@/components/trainer/documents-tab";
 import { ChatTab } from "@/components/trainer/chat-tab";
 
 export default function TrainerPage() {

@@ -165,7 +165,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           />
         </div>
         <h2 className="text-sm font-semibold text-foreground text-center">
-          Chatbot Trainer
+          SocSmart
         </h2>
         <p className="text-xs text-muted-foreground text-center">
           Manage your AI assistant

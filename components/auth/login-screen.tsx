@@ -108,9 +108,7 @@ export function LoginScreen({ onLogin }: LoginProps) {
             />
           </div>
           <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-          <CardDescription>
-            Sign in to access the Chatbot Trainer
-          </CardDescription>
+          <CardDescription>Sign in to access the SocSmart</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

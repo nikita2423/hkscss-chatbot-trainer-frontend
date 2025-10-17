@@ -47,7 +47,7 @@ export function DashboardTab() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">
-              Overview of your chatbot training data and activity
+              Overview of your training data and activity
             </p>
           </div>
 

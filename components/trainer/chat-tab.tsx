@@ -24,10 +24,9 @@ export function ChatTab() {
     <div className="flex flex-col gap-6 p-6">
       {/* Header */}
       <div style={{ flex: "1 1 auto" }}>
-        <h1 className="text-2xl font-bold tracking-tight">Chat</h1>
+        <h1 className="text-2xl font-bold tracking-tight">SocSmart</h1>
         <p className="text-muted-foreground">
-          Select departments and documents to chat with your trained AI
-          assistant
+          Select departments to chat with your trained AI assistant
         </p>
       </div>
 
